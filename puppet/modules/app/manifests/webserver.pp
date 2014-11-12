@@ -1,18 +1,18 @@
 class app::webserver {
-    
+
     class { 'composer':
         target_dir   => '/usr/local/bin',
         composer_file => 'composer',
     }
-    
+
     class { 'apache': }
-    
+
     class { 'zendserver':
         php_version => "5.4",
         use_ce => false
     }
-    
-    file { "/usr/local/bin/pear" : 
+
+    file { "/usr/local/bin/pear" :
         target => '/usr/local/zend/bin/pear',
         ensure => 'link',
         require => [ Class['zendserver'] ]
@@ -21,7 +21,7 @@ class app::webserver {
 	file { "/vagrant/public" :
 		ensure => directory
 	}
-	
+
     apache::vhost { 'development' :
         docroot  => "/vagrant/public",
         ssl      => true,
@@ -31,21 +31,21 @@ class app::webserver {
         ],
         require => [ Package['apache'], File['/vagrant/public'] ]
     }
-    
+
     exec { "bootstrap-zs-server" :
         command => "/usr/local/zend/bin/zs-manage bootstrap-single-server --acceptEula TRUE -p 'password'; touch /var/local/zs-bootstrapped",
         cwd => "/usr/local/zend/bin/",
         require => [ Class['zendserver'] ],
         creates => "/var/local/zs-bootstrapped"
     }
-    
+
     file { "/etc/profile.d/server_env.sh" :
         content => "export APPLICATION_ENV=$::environment",
         owner => root,
         group => root,
         mode => 755
     }
-    
+
     # Disable the default (catch-all) vhost
     exec { "disable default virtual host from ${name}":
         command => "a2dissite default",

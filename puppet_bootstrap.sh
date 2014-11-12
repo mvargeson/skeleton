@@ -30,12 +30,10 @@ if which puppet > /dev/null ; then
     puppet module install  puppetlabs/gcc
     puppet module install  puppetlabs/vcsrepo
     puppet module install  puppetlabs/mysql
-    
+
     puppet module install  maestrodev/wget
     puppet module install  tPl0ch/composer
-    puppet module install  evenup/ec2_tools
-    
+
 fi
 
 touch /var/local/puppet-bootstrapped
-

@@ -3,7 +3,7 @@ node default {
     include stdlib
     include git
 
-    case $::environment { 
+    case $::environment {
     	production: {
     	    include app::database
             include app::webserver
@@ -14,12 +14,6 @@ node default {
             include app::webserver
             include app::codebase
         }
-        ec2 : {
-            include app::codebase
-            include app::webserver
-            include app::database
-            include ec2
-        }
     }
 
     package { 'unzip' :
@@ -29,15 +23,15 @@ node default {
     package { 'vim' :
         ensure => present
     }
-        
+
     exec { "apt-get clean" :
       command => "/usr/bin/apt-get clean"
     }
-    
+
     exec { "apt-update":
       command => "/usr/bin/apt-get update",
       require => [ Exec['apt-get clean'] ]
     }
-    
+
     Exec["apt-update"] -> Package <| |>
 }
